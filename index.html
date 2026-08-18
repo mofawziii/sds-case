@@ -370,6 +370,12 @@
   .tool-btn svg { width: 12px; height: 12px; }
   #importInput { display: none; }
 
+  .email-cat-select {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text-dim); background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 8px; cursor: pointer;
+  }
+
   #saveStatus {
     font-family: var(--mono); font-size: 9.5px; color: var(--text-faint);
     letter-spacing: .05em; margin-top: 8px; display: none;
@@ -720,6 +726,25 @@
   }
   .simple-break-btn:active { background: var(--surface-3); }
   .simple-break-btn:hover { border-color: var(--neutral); color: var(--text); }
+
+  .break-preset-wrap { flex: 1; min-width: 90px; display: flex; gap: 3px; align-items: stretch; }
+  .break-preset-wrap .simple-break-btn { flex: 1; min-width: 0; }
+  .break-preset-mini {
+    flex: 0 0 auto; width: 26px; border-radius: 8px; background: var(--surface-2);
+    border: 1px solid var(--border); color: var(--text-faint); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .break-preset-mini svg { width: 12px; height: 12px; }
+  .break-preset-mini:hover { color: var(--text); border-color: var(--neutral); }
+  .break-preset-mini.danger:hover { color: var(--danger); border-color: var(--danger); }
+  .break-preset-add {
+    flex: 1; min-width: 90px; background: transparent; border: 1px dashed var(--border);
+    border-radius: 9px; color: var(--text-faint); font-family: var(--mono); font-size: 11px;
+    letter-spacing: .04em; padding: 10px 8px; cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .break-preset-add:hover { border-color: var(--neutral); color: var(--text); }
 
   .active-break-row {
     display: flex; align-items: center; gap: 8px;
@@ -1528,11 +1553,7 @@
 
   <div class="tracker-card breaks-card">
     <div class="tracker-label">Quick Breaks</div>
-    <div class="simple-breaks">
-      <button class="simple-break-btn" data-mins="15" type="button">15m Break</button>
-      <button class="simple-break-btn" data-mins="30" type="button">30m Lunch</button>
-      <button class="simple-break-btn" data-mins="10" type="button">10m Break</button>
-    </div>
+    <div class="simple-breaks" id="simpleBreaksList"></div>
     <div class="active-break-row" id="activeBreakRow" hidden>
       <span class="active-break-label" id="activeBreakLabel">On break</span>
       <span class="active-break-timer" id="activeBreakTimer">0:00</span>
@@ -1809,16 +1830,20 @@
     return ensureItemIds(JSON.parse(JSON.stringify(DEFAULT_DATA)));
   }
 
+  let storageWarned = false;
   function saveData() {
-    try {
-      storageSet(STORAGE_KEY, JSON.stringify(DATA));
-      storageOK = true;
-      const el = document.getElementById('saveStatus');
+    const ok = storageSet(STORAGE_KEY, JSON.stringify(DATA));
+    storageOK = ok;
+    const el = document.getElementById('saveStatus');
+    if (ok) {
+      storageWarned = false;
       if (el) el.textContent = 'Changes save automatically to this device';
-    } catch (e) {
-      storageOK = false;
-      const el = document.getElementById('saveStatus');
+    } else {
       if (el) el.textContent = 'Storage unavailable — use Export to save your changes';
+      if (!storageWarned) {
+        storageWarned = true;
+        if (typeof showToast === 'function') showToast('⚠️ Could not save — storage may be full. Export your library to be safe.');
+      }
     }
   }
 
@@ -2683,22 +2708,32 @@
   editToggle.addEventListener('click', () => {
     document.body.classList.toggle('edit-mode');
     editToggleLabel.textContent = document.body.classList.contains('edit-mode') ? 'Done' : 'Edit';
+    if (typeof renderEmails === 'function') renderEmails();
+    if (typeof renderBreakPresets === 'function') renderBreakPresets();
   });
 
   // ========== Toolbar ==========
   document.getElementById('addSectionTopBtn').addEventListener('click', addNewSection);
 
   document.getElementById('exportBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
+    const payload = {
+      __sdsBackup: true,
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      library: DATA,
+      emails: EMAILS,
+      breakPresets: BREAK_PRESETS
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'case-console-backup.json';
+    a.download = 'case-console-full-backup.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('Backup downloaded');
+    showToast('Full backup downloaded (library + emails + breaks)');
   });
 
   document.getElementById('importBtn').addEventListener('click', () => {
@@ -2712,13 +2747,40 @@
     reader.onload = () => {
       try {
         const parsed = JSON.parse(reader.result);
-        if (!isValidLibrary(parsed)) throw new Error('bad format');
-        DATA = parsed;
-        saveData();
+        let restoredParts = [];
+
+        if (parsed && parsed.__sdsBackup && parsed.library) {
+          // New-style full backup: library + emails + break presets.
+          if (!isValidLibrary(parsed.library)) throw new Error('bad format');
+          DATA = parsed.library;
+          saveData();
+          restoredParts.push('library');
+
+          if (Array.isArray(parsed.emails)) {
+            EMAILS = parsed.emails;
+            saveEmails(EMAILS);
+            restoredParts.push('emails');
+          }
+          if (Array.isArray(parsed.breakPresets) && parsed.breakPresets.length) {
+            BREAK_PRESETS = parsed.breakPresets;
+            saveBreakPresets(BREAK_PRESETS);
+            restoredParts.push('breaks');
+          }
+        } else if (isValidLibrary(parsed)) {
+          // Legacy backup: just the library array, on its own.
+          DATA = parsed;
+          saveData();
+          restoredParts.push('library');
+        } else {
+          throw new Error('bad format');
+        }
+
         render();
-        showToast('Library imported');
+        if (typeof renderEmails === 'function') renderEmails();
+        if (typeof renderBreakPresets === 'function') renderBreakPresets();
+        showToast('Restored: ' + restoredParts.join(', '));
       } catch (err) {
-        alert('That file could not be read as a library backup.');
+        alert('That file could not be read as a case console backup.');
       }
     };
     reader.readAsText(file);
@@ -2918,7 +2980,25 @@
   const SHIFT_DURATION_KEY = 'case-console-shift-duration-v1';
   const ACTIVE_BREAK_KEY = 'case-console-active-break-v1';
   const BREAK_LOG_KEY = 'case-console-break-log-v1';
+  const BREAK_PRESETS_KEY = 'case-console-break-presets-v1';
   const EMAILS_KEY = 'case-console-emails-v1';
+
+  function loadBreakPresets() {
+    try {
+      const raw = storageGet(BREAK_PRESETS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch (e) {}
+    return [
+      { id: 'preset-15', label: '15m Break', mins: 15 },
+      { id: 'preset-30', label: '30m Lunch', mins: 30 },
+      { id: 'preset-10', label: '10m Break', mins: 10 }
+    ];
+  }
+  function saveBreakPresets(list) { storageSet(BREAK_PRESETS_KEY, JSON.stringify(list)); }
+  let BREAK_PRESETS = loadBreakPresets();
 
   function todayStr() {
     const d = new Date();
@@ -2995,7 +3075,7 @@
     ensureWeek();
     if (delta > 0) {
       const now = Date.now();
-      const minGap = (options && options.force) ? 0 : 12000;
+      const minGap = (options && options.force) ? 0 : 2000;
       if (now - lastCaseIncAt < minGap) return false;
       lastCaseIncAt = now;
     }
@@ -3078,6 +3158,83 @@
       logEl.textContent = log.length
         ? log.map(e => e.label + ' ' + e.start + '–' + e.end).join(' · ')
         : 'No breaks yet today';
+    }
+  }
+
+  function renderBreakPresets() {
+    const container = document.getElementById('simpleBreaksList');
+    if (!container) return;
+    container.innerHTML = '';
+    const editing = document.body.classList.contains('edit-mode');
+
+    BREAK_PRESETS.forEach((preset, idx) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'break-preset-wrap';
+
+      const btn = document.createElement('button');
+      btn.className = 'simple-break-btn';
+      btn.type = 'button';
+      btn.dataset.mins = String(preset.mins);
+      btn.textContent = preset.label;
+      btn.addEventListener('click', () => startSimpleBreak(preset.mins, preset.label));
+      wrap.appendChild(btn);
+
+      if (editing) {
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'break-preset-mini';
+        editBtn.innerHTML = icon('edit');
+        editBtn.title = 'Edit this break';
+        editBtn.addEventListener('click', () => {
+          const newLabel = prompt('Break label:', preset.label);
+          if (newLabel === null) return;
+          const newMinsRaw = prompt('Minutes:', String(preset.mins));
+          if (newMinsRaw === null) return;
+          const newMins = parseInt(newMinsRaw, 10);
+          preset.label = newLabel.trim() || preset.label;
+          preset.mins = (Number.isFinite(newMins) && newMins > 0) ? newMins : preset.mins;
+          saveBreakPresets(BREAK_PRESETS);
+          renderBreakPresets();
+          showToast('Break updated');
+        });
+        wrap.appendChild(editBtn);
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'break-preset-mini danger';
+        delBtn.innerHTML = icon('trash');
+        delBtn.title = 'Remove this break';
+        delBtn.addEventListener('click', () => {
+          if (!confirm('Remove "' + preset.label + '"?')) return;
+          BREAK_PRESETS.splice(idx, 1);
+          saveBreakPresets(BREAK_PRESETS);
+          renderBreakPresets();
+          showToast('Break removed');
+        });
+        wrap.appendChild(delBtn);
+      }
+
+      container.appendChild(wrap);
+    });
+
+    if (editing) {
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'break-preset-add';
+      addBtn.textContent = '+ Add break';
+      addBtn.addEventListener('click', () => {
+        const label = prompt('Break label (e.g. "Coaching call"):');
+        if (!label) return;
+        const minsRaw = prompt('Minutes:', '15');
+        if (minsRaw === null) return;
+        const mins = parseInt(minsRaw, 10);
+        if (!Number.isFinite(mins) || mins <= 0) { showToast('Enter a valid number of minutes'); return; }
+        BREAK_PRESETS.push({ id: uid('brk'), label: label.trim(), mins });
+        saveBreakPresets(BREAK_PRESETS);
+        renderBreakPresets();
+        showToast('Break added');
+      });
+      container.appendChild(addBtn);
     }
   }
 
@@ -3196,12 +3353,12 @@
     }
   }
 
-  function startSimpleBreak(mins) {
+  function startSimpleBreak(mins, customLabel) {
     if (getActiveBreak()) {
       showToast('End current break first');
       return;
     }
-    const label = mins >= 25 ? mins + 'm Lunch' : mins + 'm Break';
+    const label = customLabel || (mins >= 25 ? mins + 'm Lunch' : mins + 'm Break');
     setActiveBreak({
       label,
       mins,
@@ -3554,7 +3711,25 @@ ${bod}`);
         showToast('Template reset');
       }));
 
-      if (document.body.classList.contains('edit-mode') || document.body.dataset.tab === 'emails') {
+      if (document.body.classList.contains('edit-mode')) {
+        const catSelect = document.createElement('select');
+        catSelect.className = 'email-cat-select';
+        catSelect.title = 'Change category';
+        Object.keys(EMAIL_CAT_LABELS).forEach(key => {
+          const opt = document.createElement('option');
+          opt.value = key;
+          opt.textContent = EMAIL_CAT_LABELS[key];
+          if ((em.category || 'urgent') === key) opt.selected = true;
+          catSelect.appendChild(opt);
+        });
+        catSelect.addEventListener('change', () => {
+          em.category = catSelect.value;
+          saveEmails(EMAILS);
+          renderEmails();
+          showToast('Category updated');
+        });
+        secondary.appendChild(catSelect);
+
         secondary.appendChild(mk(em.pinned ? 'Unpin' : 'Pin', '', () => {
           em.pinned = !em.pinned;
           saveEmails(EMAILS);
@@ -3579,24 +3754,6 @@ ${bod}`);
       list.appendChild(card);
       updateEmailReadyStatus();
     });
-  }
-
-  function editEmail(idx) {
-    const em = EMAILS[idx];
-    if (!em) return;
-    const subject = prompt('Subject:', em.subject || '');
-    if (subject === null) return;
-    const body = prompt('Body:', em.body || '');
-    if (body === null) return;
-    const cat = prompt('Category (urgent / investigation / forward):', em.category || 'urgent');
-    if (cat === null) return;
-    const normalized = String(cat).toLowerCase().trim();
-    em.subject = subject;
-    em.body = body;
-    em.category = ['urgent', 'investigation', 'forward'].includes(normalized) ? normalized : 'urgent';
-    saveEmails(EMAILS);
-    renderEmails();
-    showToast('Email updated');
   }
 
   // Event wiring
@@ -3657,12 +3814,7 @@ ${bod}`);
     });
   }
 
-  document.querySelectorAll('.simple-break-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const mins = parseInt(btn.dataset.mins, 10) || 15;
-      startSimpleBreak(mins);
-    });
-  });
+  renderBreakPresets();
   if (endBreakBtn) endBreakBtn.addEventListener('click', () => endActiveBreak(false));
 
   if (addEmailBtn) {
