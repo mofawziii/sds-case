@@ -44,6 +44,14 @@
   --section-rose: #fb7185;
   --section-lime: #a3e635;
   --section-orange: #fb923c;
+  --section-teal: #2dd4bf;
+  --section-amber: #fbbf24;
+  --section-sky: #38bdf8;
+  --section-violet: #a78bfa;
+  --section-fuchsia: #e879f9;
+  --section-slate: #94a3b8;
+  --section-emerald: #34d399;
+  --section-red: #f87171;
 
   }
 
@@ -124,6 +132,35 @@
     font-family: var(--sans); font-size: 11px; color: var(--text-dim);
     letter-spacing: .015em; line-height: 1.2;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .brand .byline .crafted {
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .brand .byline a.credit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 4px;
+    transition: color .15s ease, opacity .15s ease;
+  }
+  .brand .byline a.credit-link:hover {
+    opacity: 1;
+  }
+  .brand .byline a.credit-link:hover .name {
+    color: var(--text);
+  }
+  .brand .byline a.credit-link:hover .handle {
+    color: var(--neutral);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   .brand .byline .name {
     font-weight: 600; color: var(--text-dim);
@@ -235,6 +272,54 @@
   .search-count {
     margin-left: auto; color: var(--text-faint); font-family: var(--mono);
     font-size: 9px; white-space: nowrap;
+  }
+
+
+  /* Email left strap uses --email-accent (set per card) */
+  .email-card { --email-accent: var(--section-urgmail); }
+  .email-color-row {
+    display: none;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 6px 0 4px;
+  }
+  body.edit-mode .email-color-row { display: flex; }
+  .email-color-dot {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.2);
+  }
+  .email-color-dot.active { border-color: var(--text); }
+  .email-cat-manage {
+    display: none;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+  body.edit-mode .email-cat-manage { display: flex; }
+  .email-cat-manage .tool-btn { font-size: 9.5px; padding: 5px 9px; }
+  .header-tools {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .header-tools .icon-tool {
+    width: 34px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid var(--border); border-radius: 10px;
+    background: var(--surface); color: var(--text-dim);
+    cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .header-tools .icon-tool:hover { border-color: var(--neutral); color: var(--text); }
+  .header-tools .icon-tool.active {
+    background: var(--neutral); border-color: var(--neutral); color: #fff;
+  }
+  .header-tools .theme-toggle {
+    width: 34px; height: 32px;
   }
 
   /* Focus mode — maximize phrase space */
@@ -442,6 +527,16 @@
   .group[data-accent="rose"] { --section-accent: var(--section-rose); }
   .group[data-accent="lime"] { --section-accent: var(--section-lime); }
   .group[data-accent="orange"] { --section-accent: var(--section-orange); }
+
+  .group[data-accent="teal"] { --section-accent: var(--section-teal); }
+  .group[data-accent="amber"] { --section-accent: var(--section-amber); }
+  .group[data-accent="sky"] { --section-accent: var(--section-sky); }
+  .group[data-accent="violet"] { --section-accent: var(--section-violet); }
+  .group[data-accent="fuchsia"] { --section-accent: var(--section-fuchsia); }
+  .group[data-accent="slate"] { --section-accent: var(--section-slate); }
+  .group[data-accent="emerald"] { --section-accent: var(--section-emerald); }
+  .group[data-accent="red"] { --section-accent: var(--section-red); }
+
   .group[data-accent="mostused"] { --section-accent: var(--section-mostused); }
 
 
@@ -622,6 +717,8 @@
     opacity: 0.75;
     user-select: none;
   }
+  .maker-credit a { color: inherit; text-decoration: none; }
+  .maker-credit a:hover { color: var(--neutral); }
   .maker-credit span {
     color: var(--text-dim);
   }
@@ -949,11 +1046,134 @@
     font-weight: 600; outline: none;
   }
   .case-session-field input:focus { border-color: var(--neutral); }
+
+  .case-field-history {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+    min-height: 0;
+  }
+  .case-field-history:empty { display: none; }
+  .case-hist-chip {
+    border: 1px solid var(--border);
+    background: var(--surface-2);
+    color: var(--text-dim);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font: 600 10px/1.3 var(--mono);
+    cursor: pointer;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: border-color .12s, color .12s, background .12s;
+  }
+  .case-hist-chip:hover {
+    border-color: var(--neutral);
+    color: var(--text);
+    background: color-mix(in srgb, var(--neutral) 10%, var(--surface));
+  }
+  .case-hist-chip:active {
+    background: var(--neutral);
+    border-color: var(--neutral);
+    color: #fff;
+  }
+
+  .case-session-field-label-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .case-field-btns { display: flex; gap: 4px; }
+  .case-field-edit, .case-field-remove {
+    width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text-faint); font-size: 11px; line-height: 1; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; padding: 0;
+  }
+  .case-field-edit:hover { color: var(--neutral); border-color: var(--neutral); }
+  .case-field-remove:hover { color: var(--danger); border-color: var(--danger); }
+  .case-field-token {
+    font-family: var(--mono); font-size: 8.5px; font-weight: 600; color: var(--neutral);
+    letter-spacing: .03em; text-transform: none; opacity: .9;
+  }
+  .case-session-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+  .case-session-add-field { display: flex; align-items: flex-end; }
+  .case-field-add-btn {
+    width: 100%; height: 40px; border: 1px dashed var(--border); background: transparent;
+    color: var(--text-dim); border-radius: 9px; font: 700 10px/1 var(--mono);
+    letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+  }
+  .case-field-add-btn:hover { border-color: var(--neutral); color: var(--text); }
+
   .case-session .mini-clear {
     border: 1px solid var(--border); background: var(--surface-2); color: var(--text-dim);
     border-radius: 8px; padding: 5px 10px; font: 700 9.5px/1 var(--mono);
     letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
   }
+  .case-session .mini-clear:hover { border-color: var(--neutral); color: var(--text); }
+  #caseSessionDetect {
+    border-color: color-mix(in srgb, var(--neutral) 45%, var(--border));
+    color: var(--neutral);
+  }
+  #caseSessionDetect:hover {
+    background: color-mix(in srgb, var(--neutral) 12%, var(--surface));
+    border-color: var(--neutral);
+    color: var(--text);
+  }
+  .case-placeholder-status {
+    margin-top: 8px;
+    padding: 7px 10px;
+    border-radius: 9px;
+    background: color-mix(in srgb, var(--neutral) 8%, var(--surface-2));
+    border: 1px solid color-mix(in srgb, var(--neutral) 25%, var(--border));
+    font: 600 11px/1.4 var(--sans);
+    color: var(--text-dim);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+  }
+  .case-placeholder-status .ph-label {
+    font: 700 9px/1 var(--mono);
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--neutral);
+  }
+  .case-placeholder-status .ph-token {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 7px;
+    color: var(--text);
+  }
+  .case-placeholder-status .ph-token.missing {
+    border-color: color-mix(in srgb, var(--wait) 50%, var(--border));
+    color: var(--wait);
+  }
+  .case-placeholder-status .ph-add-btn {
+    margin-left: auto;
+    border: 1px solid var(--open);
+    background: color-mix(in srgb, var(--open) 12%, var(--surface));
+    color: var(--open);
+    border-radius: 7px;
+    padding: 4px 10px;
+    font: 700 9.5px/1 var(--mono);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .case-placeholder-status .ph-add-btn:hover {
+    background: var(--open);
+    color: #fff;
+  }
+  .case-placeholder-status.all-synced {
+    background: color-mix(in srgb, var(--open) 8%, var(--surface-2));
+    border-color: color-mix(in srgb, var(--open) 28%, var(--border));
+  }
+  .case-placeholder-status.all-synced .ph-label { color: var(--open); }
 
 
   /* Enhanced shift timer */
@@ -1409,18 +1629,23 @@
   <div class="title-row">
     <div class="brand">
       <h1>SDS Case Library</h1>
-      <div class="byline"><span class="name">Mohammed Fawzi</span><span class="sep"></span><span class="handle">mohxfawz</span></div>
+      <div class="byline">
+        <span class="crafted">Crafted by</span>
+        <a class="credit-link" href="https://atoz.amazon.work/phonetool/users/mohxfawz" target="_blank" rel="noopener noreferrer" title="Open org profile">
+          <span class="name">Mohammed Fawzi</span><span class="sep"></span><span class="handle">mohxfawz</span>
+        </a>
+      </div>
     </div>
     <div class="header-search">
       <div class="search-wrap">
         <input id="search" type="text" placeholder="Search… (Ctrl+K)" autocomplete="off" autocorrect="off" spellcheck="false">
         <button class="clear-btn" id="clearBtn" aria-label="Clear search">&times;</button>
       </div>
-      <button class="quick-btn header-focus" id="focusBtn" type="button" aria-pressed="false">Focus</button>
       <span class="search-count" id="searchCount" aria-live="polite"></span>
     </div>
-    <div class="right">
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch to light mode">
+    <div class="right header-tools">
+      <button class="icon-tool" id="focusBtn" type="button" aria-pressed="false" title="Focus mode">Focus</button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to light mode" title="Theme">
         <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"></path></svg>
         <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
       </button>
@@ -1469,23 +1694,12 @@
   <div class="case-session-head">
     <span class="case-session-title">Active case</span>
     <div class="case-session-actions">
+      <button type="button" class="mini-clear" id="caseSessionDetect" title="Scan email templates & library for {{placeholders}} and add missing fields">Detect</button>
       <button type="button" class="mini-clear" id="caseSessionClear">Clear</button>
     </div>
   </div>
-  <div class="case-session-grid">
-    <div class="case-session-field">
-      <label for="sessionTracking">Tracking</label>
-      <input type="text" id="sessionTracking" placeholder="Tracking ID" autocomplete="off" spellcheck="false">
-    </div>
-    <div class="case-session-field">
-      <label for="sessionStation">Station</label>
-      <input type="text" id="sessionStation" placeholder="Station code" autocomplete="off" spellcheck="false">
-    </div>
-    <div class="case-session-field">
-      <label for="sessionIssue">Issue</label>
-      <input type="text" id="sessionIssue" placeholder="Short issue" autocomplete="off" spellcheck="false">
-    </div>
-  </div>
+  <div class="case-session-grid" id="caseSessionGrid"></div>
+  <div class="case-placeholder-status" id="casePlaceholderStatus" hidden></div>
 </section>
 
 <section class="shift-tracker panel-tracker" id="shiftTracker">
@@ -1572,15 +1786,15 @@
   <div class="group-head">
     <span class="emoji">📧</span><h2>Email Templates</h2><span class="rule"></span>
   </div>
-  <p class="emails-hint">Uses Active Case fields (tracking / station). Fill once, then copy subject or body into Outlook. <b>Edit mode</b> adds template management; edits auto-save.</p>
+  <p class="emails-hint">Uses Active Case fields. Fill once, then copy subject or body into Outlook. Placeholders like <code>{{tracking}}</code> are auto-detected from templates — use <b>Detect</b> in Active Case to add missing fields. <b>Edit mode</b> adds template management; edits auto-save.</p>
 
   <div class="email-workspace">
     <div class="email-workspace-title">Quick filters</div>
-    <div class="email-cat-bar" id="emailCatBar">
-      <button class="email-cat-btn active" type="button" data-cat="all">All</button>
-      <button class="email-cat-btn" type="button" data-cat="urgent">Urgent</button>
-      <button class="email-cat-btn" type="button" data-cat="investigation">Investigation</button>
-      <button class="email-cat-btn" type="button" data-cat="forward">Forward</button>
+    <div class="email-cat-bar" id="emailCatBar"></div>
+    <div class="email-cat-manage" id="emailCatManage">
+      <button type="button" class="tool-btn" id="addEmailCatBtn">+ Category</button>
+      <button type="button" class="tool-btn" id="renameEmailCatBtn">Rename</button>
+      <button type="button" class="tool-btn danger" id="deleteEmailCatBtn">Delete category</button>
     </div>
   </div>
 
@@ -1649,7 +1863,7 @@
 </section>
 
 
-<div class="maker-credit">SDS Case Library · <span>Mohammed Fawzi</span> · mohxfawz</div>
+<div class="maker-credit">SDS Case Library · Crafted by <a href="https://atoz.amazon.work/phonetool/users/mohxfawz" target="_blank" rel="noopener noreferrer"><span>Mohammed Fawzi</span> · mohxfawz</a></div>
 
 <div id="toast"><span class="dot"></span><span id="toastMsg">Copied to clipboard</span></div>
 
@@ -1802,6 +2016,44 @@
     try { localStorage.removeItem(key); return true; } catch (e) { return false; }
   }
 
+  // ========== Crash Safety Net ==========
+  // Catches unexpected runtime errors so a single bad render or event handler
+  // can't take down the whole tool mid-shift. Data already saved to
+  // localStorage is untouched by any of this — it only affects the live view.
+  let crashBannerShown = false;
+  function showCrashBanner(message) {
+    if (crashBannerShown) return; // don't stack banners on repeated errors
+    crashBannerShown = true;
+    try {
+      const bar = document.createElement('div');
+      bar.setAttribute('role', 'alert');
+      bar.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;' +
+        'background:#b91c1c;color:#fff;padding:12px 16px;font:600 13px/1.4 -apple-system,system-ui,sans-serif;' +
+        'display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;box-shadow:0 -2px 12px rgba(0,0,0,.3)';
+      bar.innerHTML = `<span>⚠️ ${escapeHtml(message)}</span>`;
+      const reloadBtn = document.createElement('button');
+      reloadBtn.textContent = 'Reload';
+      reloadBtn.style.cssText = 'background:#fff;color:#b91c1c;border:none;border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer';
+      reloadBtn.addEventListener('click', () => location.reload());
+      const dismissBtn = document.createElement('button');
+      dismissBtn.textContent = 'Dismiss';
+      dismissBtn.style.cssText = 'background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6);border-radius:6px;padding:6px 12px;font-weight:600;cursor:pointer';
+      dismissBtn.addEventListener('click', () => { bar.remove(); crashBannerShown = false; });
+      bar.appendChild(reloadBtn);
+      bar.appendChild(dismissBtn);
+      document.body.appendChild(bar);
+    } catch (e) { /* if even the banner fails, at least the console.error already fired */ }
+  }
+
+  window.addEventListener('error', (e) => {
+    console.error('[SDS Case Library] Uncaught error:', e.error || e.message);
+    showCrashBanner('Something went wrong. Your saved data is safe — try Export, then Reload if things look stuck.');
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    console.error('[SDS Case Library] Unhandled promise rejection:', e.reason);
+    showCrashBanner('Something went wrong. Your saved data is safe — try Export, then Reload if things look stuck.');
+  });
+
   let DATA = loadData();
   let storageOK = true;
   let USAGE = loadUsage();
@@ -1928,14 +2180,16 @@
   }
 
   // ========== Placeholder helpers ==========
-  const PLACEHOLDER_RE = /\{\{\s*([a-zA-Z0-9_-]+)\s*\}\}/g;
+  function placeholderRegex() {
+    return /\{\{\s*([a-zA-Z0-9_-]+)\s*\}\}/gi;
+  }
 
   function extractPlaceholders(text) {
     const keys = [];
     const seen = {};
+    const re = placeholderRegex();
     let m;
-    const re = new RegExp(PLACEHOLDER_RE.source, 'g');
-    while ((m = re.exec(text || '')) !== null) {
+    while ((m = re.exec(String(text || ''))) !== null) {
       const key = m[1].toLowerCase();
       if (!seen[key]) {
         seen[key] = true;
@@ -1946,10 +2200,196 @@
   }
 
   function applyPlaceholders(text, values) {
-    return String(text || '').replace(PLACEHOLDER_RE, (_, key) => {
-      const k = key.toLowerCase();
-      return (values && values[k] != null && values[k] !== '') ? values[k] : '{{' + key + '}}';
+    values = values || {};
+    const map = {};
+    Object.keys(values).forEach(k => { map[String(k).toLowerCase()] = values[k]; });
+    return String(text || '').replace(placeholderRegex(), (_, key) => {
+      const k = String(key).toLowerCase();
+      const val = map[k];
+      return (val != null && String(val) !== '') ? String(val) : '{{' + key + '}}';
     });
+  }
+
+  // ========== Intelligent Placeholder Engine ==========
+  // Collects every {{token}} used in email templates + library phrases,
+  // surfaces missing Active Case fields, and one-click adds them.
+
+  const KNOWN_FIELD_LABELS = {
+    tracking: 'Tracking',
+    tracking_id: 'Tracking ID',
+    track: 'Tracking',
+    station: 'Station',
+    station_code: 'Station Code',
+    issue: 'Issue',
+    order: 'Order',
+    order_id: 'Order ID',
+    orderid: 'Order ID',
+    rrn: 'RRN',
+    customer: 'Customer',
+    customer_name: 'Customer Name',
+    reason: 'Reason',
+    impact: 'Customer Impact',
+    details: 'Details',
+    action: 'Action Needed',
+    date: 'Order Date',
+    order_date: 'Order Date',
+    asin: 'ASIN',
+    sku: 'SKU',
+    phone: 'Phone',
+    email: 'Email',
+    agent: 'Agent',
+    case_id: 'Case ID',
+    ticket: 'Ticket'
+  };
+
+  function humanizePlaceholderKey(key) {
+    const k = String(key || '').toLowerCase().trim();
+    if (KNOWN_FIELD_LABELS[k]) return KNOWN_FIELD_LABELS[k];
+    // station_code → Station Code, orderId → Order Id
+    return k
+      .replace(/[_-]+/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/\b\w/g, c => c.toUpperCase())
+      .trim() || key;
+  }
+
+  function collectPlaceholdersFromText(text, intoSet) {
+    const keys = extractPlaceholders(text);
+    keys.forEach(k => intoSet.add(k.toLowerCase()));
+  }
+
+  function collectAllPlaceholders() {
+    const found = new Set();
+
+    // Email templates
+    if (typeof EMAILS !== 'undefined' && Array.isArray(EMAILS)) {
+      EMAILS.forEach(em => {
+        collectPlaceholdersFromText(em.subject, found);
+        collectPlaceholdersFromText(em.body, found);
+      });
+    }
+
+    // Library phrases (especially code / template-style ones)
+    if (typeof DATA !== 'undefined' && Array.isArray(DATA)) {
+      DATA.forEach(group => {
+        (group.subs || []).forEach(sub => {
+          (sub.items || []).forEach(item => {
+            collectPlaceholdersFromText(item.text, found);
+          });
+        });
+      });
+    }
+
+    return Array.from(found).sort();
+  }
+
+  function getMissingPlaceholders() {
+    const all = collectAllPlaceholders();
+    const existing = new Set(
+      (typeof CASE_FIELDS !== 'undefined' ? CASE_FIELDS : []).map(f => String(f.key).toLowerCase())
+    );
+    return all.filter(k => !existing.has(k));
+  }
+
+  function getPresentPlaceholders() {
+    const all = collectAllPlaceholders();
+    const existing = new Set(
+      (typeof CASE_FIELDS !== 'undefined' ? CASE_FIELDS : []).map(f => String(f.key).toLowerCase())
+    );
+    return all.filter(k => existing.has(k));
+  }
+
+  function addMissingPlaceholderFields(keys, opts) {
+    opts = opts || {};
+    if (!keys || !keys.length) return 0;
+    let added = 0;
+    keys.forEach(key => {
+      const k = String(key).toLowerCase().trim();
+      if (!k) return;
+      if (CASE_FIELDS.some(f => f.key === k)) return;
+      CASE_FIELDS.push({
+        key: k,
+        label: humanizePlaceholderKey(k),
+        placeholder: humanizePlaceholderKey(k),
+        locked: false
+      });
+      added++;
+    });
+    if (added) {
+      saveCaseFields(CASE_FIELDS);
+      if (typeof renderCaseSession === 'function') renderCaseSession();
+      if (typeof updatePlaceholderStatus === 'function') updatePlaceholderStatus();
+      if (!opts.silent) {
+        showToast(added === 1
+          ? 'Added field · {{' + keys[0] + '}}'
+          : 'Added ' + added + ' fields from templates');
+      }
+    }
+    return added;
+  }
+
+  function updatePlaceholderStatus() {
+    const el = document.getElementById('casePlaceholderStatus');
+    if (!el) return;
+
+    const all = collectAllPlaceholders();
+    const missing = getMissingPlaceholders();
+    const present = getPresentPlaceholders();
+
+    if (!all.length) {
+      el.hidden = true;
+      el.innerHTML = '';
+      return;
+    }
+
+    el.hidden = false;
+    el.classList.toggle('all-synced', missing.length === 0);
+
+    let html = '<span class="ph-label">' +
+      (missing.length ? 'Missing fields' : 'All placeholders synced') +
+      '</span>';
+
+    if (missing.length) {
+      missing.forEach(k => {
+        html += '<span class="ph-token missing">{{' + escapeHtml(k) + '}}</span>';
+      });
+      html += '<button type="button" class="ph-add-btn" id="phAddMissingBtn">+ Add ' +
+        missing.length + ' field' + (missing.length > 1 ? 's' : '') + '</button>';
+    } else {
+      present.slice(0, 8).forEach(k => {
+        html += '<span class="ph-token">{{' + escapeHtml(k) + '}}</span>';
+      });
+      if (present.length > 8) {
+        html += '<span class="ph-token">+' + (present.length - 8) + ' more</span>';
+      }
+    }
+
+    el.innerHTML = html;
+
+    const addBtn = document.getElementById('phAddMissingBtn');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        addMissingPlaceholderFields(missing);
+      });
+    }
+  }
+
+  function detectAndOfferPlaceholders(text, sourceLabel) {
+    const keys = extractPlaceholders(text);
+    if (!keys.length) return;
+    const existing = new Set(CASE_FIELDS.map(f => String(f.key).toLowerCase()));
+    const missing = keys.filter(k => !existing.has(k.toLowerCase()));
+    if (!missing.length) return;
+
+    // Soft offer via toast + status refresh (non-blocking)
+    updatePlaceholderStatus();
+    showToast(
+      (missing.length === 1
+        ? 'New placeholder {{' + missing[0] + '}} detected'
+        : missing.length + ' new placeholders detected') +
+      (sourceLabel ? ' in ' + sourceLabel : '') +
+      ' — use Detect or + Add'
+    );
   }
 
   // ========== Soft delete ==========
@@ -2022,11 +2462,29 @@
     { id: 'indigo', color: '#818cf8' },
     { id: 'rose', color: '#fb7185' },
     { id: 'lime', color: '#a3e635' },
-    { id: 'orange', color: '#fb923c' }
+    { id: 'orange', color: '#fb923c' },
+    { id: 'teal', color: '#2dd4bf' },
+    { id: 'amber', color: '#fbbf24' },
+    { id: 'sky', color: '#38bdf8' },
+    { id: 'violet', color: '#a78bfa' },
+    { id: 'fuchsia', color: '#e879f9' },
+    { id: 'slate', color: '#94a3b8' },
+    { id: 'emerald', color: '#34d399' },
+    { id: 'red', color: '#f87171' }
   ];
+
 
   // ========== Render ==========
   function render() {
+    try {
+      renderLibraryUnsafe();
+    } catch (err) {
+      console.error('[SDS Case Library] render() failed:', err);
+      showCrashBanner('The library view hit a snag and couldn\'t redraw. Your data is safe — try Export as a precaution, then Reload.');
+    }
+  }
+
+  function renderLibraryUnsafe() {
     main.innerHTML = '';
     chipNav.innerHTML = '';
 
@@ -2324,6 +2782,10 @@
       if (tagInput) item.tag = tagInput.value;
       saveData();
       render();
+      // Detect new {{placeholders}} from the saved phrase
+      if (typeof detectAndOfferPlaceholders === 'function') {
+        detectAndOfferPlaceholders(item.text || '', 'phrase');
+      }
     });
 
     const cancelBtn = document.createElement('button');
@@ -3404,11 +3866,66 @@
     }
   ];
 
-  const EMAIL_CAT_LABELS = {
-    urgent: 'Urgent',
-    investigation: 'Investigation',
-    forward: 'Forward'
-  };
+  const EMAIL_CATS_KEY = 'case-console-email-cats-v1';
+  const DEFAULT_EMAIL_CATS = [
+    { id: 'urgent', label: 'Urgent', color: '#c084fc' },
+    { id: 'investigation', label: 'Investigation', color: '#7aa2f7' },
+    { id: 'forward', label: 'Forward', color: '#f472b6' }
+  ];
+  function loadEmailCats() {
+    try {
+      const raw = storageGet(EMAIL_CATS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_EMAIL_CATS));
+  }
+  function saveEmailCats(list) {
+    storageSet(EMAIL_CATS_KEY, JSON.stringify(list));
+  }
+  let EMAIL_CATS = loadEmailCats();
+
+  function emailCatById(id) {
+    return EMAIL_CATS.find(c => c.id === id) || EMAIL_CATS[0] || { id: 'urgent', label: 'Urgent', color: '#c084fc' };
+  }
+  function emailCatLabel(id) {
+    const c = emailCatById(id);
+    return c ? c.label : id;
+  }
+  // Back-compat for any remaining EMAIL_CAT_LABELS lookups
+  const EMAIL_CAT_LABELS = new Proxy({}, {
+    get(_, key) {
+      if (key === 'all') return 'All';
+      return emailCatLabel(String(key));
+    },
+    ownKeys() { return EMAIL_CATS.map(c => c.id); },
+    getOwnPropertyDescriptor() { return { enumerable: true, configurable: true }; }
+  });
+
+  function slugifyCatId(label) {
+    return String(label).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'cat';
+  }
+
+  function renderEmailCatBar() {
+    const bar = document.getElementById('emailCatBar');
+    if (!bar) return;
+    const active = emailCategoryFilter || 'all';
+    let html = '<button class="email-cat-btn' + (active === 'all' ? ' active' : '') + '" type="button" data-cat="all">All</button>';
+    EMAIL_CATS.forEach(c => {
+      html += '<button class="email-cat-btn' + (active === c.id ? ' active' : '') + '" type="button" data-cat="' + escapeHtml(c.id) + '" style="border-color:' + escapeHtml(c.color) + '40">' + escapeHtml(c.label) + '</button>';
+    });
+    bar.innerHTML = html;
+    bar.querySelectorAll('.email-cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        emailCategoryFilter = btn.dataset.cat || 'all';
+        renderEmailCatBar();
+        renderEmails();
+      });
+    });
+  }
+
 
   // Keep saved email text clean for Outlook.
   function cleanEmailText(value) {
@@ -3441,16 +3958,172 @@
   let EMAILS = loadEmails();
   let emailCategoryFilter = 'all';
 
+  const CASE_FIELDS_KEY = 'case-console-fields-v1';
+  const DEFAULT_CASE_FIELDS = [
+    { key: 'tracking', label: 'Tracking', placeholder: 'Tracking ID', locked: false },
+    { key: 'station', label: 'Station', placeholder: 'Station code', locked: false },
+    { key: 'issue', label: 'Issue', placeholder: 'Short issue', locked: false }
+  ];
+  function loadCaseFields() {
+    try {
+      const raw = storageGet(CASE_FIELDS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length) return parsed;
+      }
+    } catch (e) {}
+    return JSON.parse(JSON.stringify(DEFAULT_CASE_FIELDS));
+  }
+  function saveCaseFields(list) { storageSet(CASE_FIELDS_KEY, JSON.stringify(list)); }
+  let CASE_FIELDS = loadCaseFields();
+
+  function slugifyFieldKey(label) {
+    return String(label).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'field';
+  }
+
+  function renderCaseSession() {
+    const grid = document.getElementById('caseSessionGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    CASE_FIELDS.forEach(f => {
+      const wrap = document.createElement('div');
+      wrap.className = 'case-session-field';
+
+      const labelRow = document.createElement('div');
+      labelRow.className = 'case-session-field-label-row';
+      const label = document.createElement('label');
+      label.setAttribute('for', 'session_' + f.key);
+      label.innerHTML = escapeHtml(f.label) + ' <span class="case-field-token">{{' + escapeHtml(f.key) + '}}</span>';
+      labelRow.appendChild(label);
+
+      const btns = document.createElement('span');
+      btns.className = 'case-field-btns';
+
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'case-field-edit';
+      editBtn.title = 'Rename field';
+      editBtn.textContent = '✎';
+      editBtn.addEventListener('click', () => {
+        const newLabel = prompt('Field name:', f.label);
+        if (newLabel === null || !newLabel.trim()) return;
+        const trimmed = newLabel.trim();
+        f.label = trimmed;
+        f.placeholder = trimmed;
+        const changeKey = confirm(
+          'Also change template token?\n\nCurrent: {{' + f.key + '}}\nNew: {{' + slugifyFieldKey(trimmed) + '}}\n\nOK = change token · Cancel = keep token'
+        );
+        if (changeKey) {
+          const nk = slugifyFieldKey(trimmed);
+          if (CASE_FIELDS.some(x => x.key === nk && x !== f)) {
+            showToast('Token already exists');
+            return;
+          }
+          const oldEl = document.getElementById('session_' + f.key);
+          const oldVal = oldEl ? oldEl.value : '';
+          f.key = nk;
+          setTimeout(() => {
+            const el = document.getElementById('session_' + nk);
+            if (el) el.value = oldVal;
+            saveCaseSession();
+          }, 0);
+        }
+        saveCaseFields(CASE_FIELDS);
+        renderCaseSession();
+        showToast('Field updated · {{' + f.key + '}}');
+      });
+      btns.appendChild(editBtn);
+
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'case-field-remove';
+      rm.title = 'Remove field';
+      rm.textContent = '×';
+      rm.addEventListener('click', () => {
+        if (!confirm('Remove "' + f.label + '" ({{' + f.key + '}})?')) return;
+        CASE_FIELDS = CASE_FIELDS.filter(x => x.key !== f.key);
+        if (!CASE_FIELDS.length) {
+          CASE_FIELDS = JSON.parse(JSON.stringify(DEFAULT_CASE_FIELDS));
+          showToast('Restored defaults');
+        } else {
+          showToast('Field removed');
+        }
+        saveCaseFields(CASE_FIELDS);
+        renderCaseSession();
+      });
+      btns.appendChild(rm);
+      labelRow.appendChild(btns);
+      wrap.appendChild(labelRow);
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'session_' + f.key;
+      input.placeholder = f.placeholder || f.label;
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      input.addEventListener('input', saveCaseSession);
+
+      const histRow = document.createElement('div');
+      histRow.className = 'case-field-history';
+      histRow.id = 'session_hist_' + f.key;
+
+      // Remember value when agent leaves the field (most natural moment)
+      input.addEventListener('blur', () => {
+        const v = input.value.trim();
+        if (v) {
+          pushFieldHistory(f.key, v);
+          renderFieldHistoryChips(f.key, histRow, input);
+        }
+      });
+
+      wrap.appendChild(input);
+      renderFieldHistoryChips(f.key, histRow, input);
+      wrap.appendChild(histRow);
+
+      grid.appendChild(wrap);
+    });
+
+    const addWrap = document.createElement('div');
+    addWrap.className = 'case-session-field case-session-add-field';
+    const addBtn = document.createElement('button');
+    addBtn.type = 'button';
+    addBtn.className = 'case-field-add-btn';
+    addBtn.textContent = '+ Add field';
+    addBtn.addEventListener('click', () => {
+      const label = prompt('New field name (e.g. Order ID, RRN, Customer):');
+      if (!label || !label.trim()) return;
+      const key = slugifyFieldKey(label);
+      if (CASE_FIELDS.some(f => f.key === key)) {
+        showToast('{{' + key + '}} already exists');
+        return;
+      }
+      CASE_FIELDS.push({ key, label: label.trim(), placeholder: label.trim(), locked: false });
+      saveCaseFields(CASE_FIELDS);
+      renderCaseSession();
+      showToast('Added · use {{' + key + '}} in templates');
+      const el = document.getElementById('session_' + key);
+      if (el) el.focus();
+    });
+    addWrap.appendChild(addBtn);
+    grid.appendChild(addWrap);
+
+    loadCaseSession();
+    // Refresh intelligent placeholder status after fields re-render
+    if (typeof updatePlaceholderStatus === 'function') {
+      setTimeout(updatePlaceholderStatus, 0);
+    }
+  }
+
   function getSessionValues() {
-    const trackingEl = document.getElementById('sessionTracking');
-    const stationEl = document.getElementById('sessionStation');
-    const issueEl = document.getElementById('sessionIssue');
-    return {
-      tracking: trackingEl ? trackingEl.value.trim() : '',
-      station: stationEl ? stationEl.value.trim() : '',
-      issue: issueEl ? issueEl.value.trim() : '',
-      name: ''
-    };
+    const values = {};
+    CASE_FIELDS.forEach(f => {
+      const el = document.getElementById('session_' + f.key);
+      const v = el ? el.value.trim() : '';
+      values[f.key] = v;
+      values[String(f.key).toLowerCase()] = v;
+    });
+    return values;
   }
 
   function getEmailFillValues() {
@@ -3462,31 +4135,100 @@
   }
 
   const CASE_SESSION_KEY = 'case-console-session-v1';
+  const FIELD_HISTORY_KEY = 'case-console-field-history-v1';
+  const FIELD_HISTORY_MAX = 6;
+
+  function loadFieldHistory() {
+    try {
+      const raw = storageGet(FIELD_HISTORY_KEY);
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (p && typeof p === 'object') return p;
+      }
+    } catch (e) {}
+    return {};
+  }
+  function saveFieldHistory(map) {
+    try { storageSet(FIELD_HISTORY_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+  let FIELD_HISTORY = loadFieldHistory();
+
+  function getFieldHistory(key) {
+    const k = String(key).toLowerCase();
+    const arr = FIELD_HISTORY[k];
+    return Array.isArray(arr) ? arr : [];
+  }
+
+  function pushFieldHistory(key, value) {
+    const v = String(value || '').trim();
+    if (!v || v.length < 2) return; // ignore tiny noise
+    const k = String(key).toLowerCase();
+    let arr = getFieldHistory(k).filter(x => x !== v);
+    arr.unshift(v);
+    FIELD_HISTORY[k] = arr.slice(0, FIELD_HISTORY_MAX);
+    saveFieldHistory(FIELD_HISTORY);
+  }
+
+  function recordAllFieldHistory() {
+    const values = getSessionValues();
+    CASE_FIELDS.forEach(f => {
+      const v = values[f.key];
+      if (v) pushFieldHistory(f.key, v);
+    });
+  }
+
+  function renderFieldHistoryChips(key, container, inputEl) {
+    if (!container) return;
+    container.innerHTML = '';
+    const current = inputEl ? inputEl.value.trim() : '';
+    getFieldHistory(key).forEach(val => {
+      // Skip chip if it matches what's already typed (reduces noise)
+      if (val === current) return;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'case-hist-chip';
+      chip.textContent = val;
+      chip.title = 'Reuse: ' + val;
+      chip.addEventListener('click', () => {
+        const input = inputEl || document.getElementById('session_' + key);
+        if (input) {
+          input.value = val;
+          saveCaseSession();
+          pushFieldHistory(key, val); // bump to front
+          renderFieldHistoryChips(key, container, input);
+          input.focus();
+        }
+      });
+      container.appendChild(chip);
+    });
+  }
+
   function loadCaseSession() {
     try {
       const raw = storageGet(CASE_SESSION_KEY);
       if (!raw) return;
       const p = JSON.parse(raw);
-      const t = document.getElementById('sessionTracking');
-      const s = document.getElementById('sessionStation');
-      const i = document.getElementById('sessionIssue');
-      if (t) t.value = p.tracking || '';
-      if (s) s.value = p.station || '';
-      if (i) i.value = p.issue || '';
+      CASE_FIELDS.forEach(f => {
+        const el = document.getElementById('session_' + f.key);
+        if (!el) return;
+        const val = p[f.key] != null ? p[f.key] : p[String(f.key).toLowerCase()];
+        if (val != null) el.value = val;
+      });
     } catch (e) {}
   }
   function saveCaseSession() {
-    const v = getSessionValues();
-    storageSet(CASE_SESSION_KEY, JSON.stringify(v));
+    try { storageSet(CASE_SESSION_KEY, JSON.stringify(getSessionValues())); } catch (e) {}
   }
   function clearCaseSession() {
-    const t = document.getElementById('sessionTracking');
-    const s = document.getElementById('sessionStation');
-    const i = document.getElementById('sessionIssue');
-    if (t) t.value = '';
-    if (s) s.value = '';
-    if (i) i.value = '';
+    // Remember current values before wiping so they stay in history chips
+    recordAllFieldHistory();
+    CASE_FIELDS.forEach(f => {
+      const el = document.getElementById('session_' + f.key);
+      if (el) el.value = '';
+    });
     saveCaseSession();
+    // Rebuild field UI so history chips reappear under empty inputs
+    if (typeof renderCaseSession === 'function') renderCaseSession();
   }
 
   // Drafts: in-memory filled subject/body per template id (reset on Clear)
@@ -3517,6 +4259,11 @@
       em.subject = cleanEmailText(subject);
       em.body = cleanEmailText(body);
       saveEmails(EMAILS);
+      // Intelligent detection: surface any new {{tokens}} the agent just typed
+      detectAndOfferPlaceholders(
+        (em.subject || '') + '\n' + (em.body || ''),
+        'email template'
+      );
     }, 250);
   }
 
@@ -3586,13 +4333,17 @@ ${bod}`);
       const card = document.createElement('div');
       card.className = 'email-card' + (em.pinned ? ' pinned' : '');
       card.dataset.emailId = em.id;
-      card.dataset.category = em.category || 'urgent';
+      const catId = em.category || (EMAIL_CATS[0] && EMAIL_CATS[0].id) || 'urgent';
+      card.dataset.category = catId;
+      const accentColor = em.accent || (emailCatById(catId).color) || '#c084fc';
+      card.style.setProperty('--email-accent', accentColor);
 
       const meta = document.createElement('div');
       meta.className = 'email-meta';
       const cat = document.createElement('span');
       cat.className = 'email-cat-tag';
-      cat.textContent = EMAIL_CAT_LABELS[em.category] || 'Email';
+      cat.textContent = emailCatLabel(catId);
+      cat.style.color = accentColor;
       meta.appendChild(cat);
 
       // Live readiness indicator: no signature is ever added here.
@@ -3613,6 +4364,27 @@ ${bod}`);
         meta.appendChild(pin);
       }
       card.appendChild(meta);
+
+      // Strap color picker (edit mode)
+      if (document.body.classList.contains('edit-mode')) {
+        const colorRow = document.createElement('div');
+        colorRow.className = 'email-color-row';
+        SECTION_COLOR_OPTIONS.forEach(opt => {
+          const dot = document.createElement('button');
+          dot.type = 'button';
+          dot.className = 'email-color-dot' + ((em.accent || accentColor) === opt.color || (em.accent === opt.id) ? ' active' : '');
+          dot.style.background = opt.color;
+          dot.title = opt.id;
+          dot.addEventListener('click', () => {
+            em.accent = opt.color;
+            saveEmails(EMAILS);
+            renderEmails();
+            showToast('Email strap color updated');
+          });
+          colorRow.appendChild(dot);
+        });
+        card.appendChild(colorRow);
+      }
 
       const subjLab = document.createElement('span');
       subjLab.className = 'email-field-label';
@@ -3715,11 +4487,11 @@ ${bod}`);
         const catSelect = document.createElement('select');
         catSelect.className = 'email-cat-select';
         catSelect.title = 'Change category';
-        Object.keys(EMAIL_CAT_LABELS).forEach(key => {
+        EMAIL_CATS.forEach(c => {
           const opt = document.createElement('option');
-          opt.value = key;
-          opt.textContent = EMAIL_CAT_LABELS[key];
-          if ((em.category || 'urgent') === key) opt.selected = true;
+          opt.value = c.id;
+          opt.textContent = c.label;
+          if ((em.category || EMAIL_CATS[0].id) === c.id) opt.selected = true;
           catSelect.appendChild(opt);
         });
         catSelect.addEventListener('change', () => {
@@ -3823,19 +4595,23 @@ ${bod}`);
       if (subject === null) return;
       const body = prompt('Email body:', '');
       if (body === null) return;
-      const cat = prompt('Category (urgent / investigation / forward):', 'urgent');
+      const catNames = EMAIL_CATS.map(c => c.label).join(' / ');
+      const cat = prompt('Category (' + catNames + '):', EMAIL_CATS[0] ? EMAIL_CATS[0].label : 'Urgent');
       if (cat === null) return;
       const normalized = String(cat).toLowerCase().trim();
+      let catId = (EMAIL_CATS.find(c => c.id === normalized || c.label.toLowerCase() === normalized) || EMAIL_CATS[0] || { id: 'urgent' }).id;
       EMAILS.push({
         id: uid('em'),
         subject: subject || '',
         body: body || '',
-        category: ['urgent', 'investigation', 'forward'].includes(normalized) ? normalized : 'urgent',
+        category: catId,
         pinned: false
       });
       saveEmails(EMAILS);
       renderEmails();
       showToast('Email template added');
+      // Detect any new placeholders the user typed in the new template
+      detectAndOfferPlaceholders((subject || '') + '\n' + (body || ''), 'new email');
     });
   }
 
@@ -3850,27 +4626,111 @@ ${bod}`);
       showToast('Active case cleared');
     });
   }
-  ['sessionTracking', 'sessionStation', 'sessionIssue'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', saveCaseSession);
-  });
 
-  // Category filter chips
-  document.querySelectorAll('.email-cat-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.email-cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      emailCategoryFilter = btn.dataset.cat || 'all';
-      renderEmails();
+  // Intelligent Placeholder Detect — scans emails + library
+  const caseSessionDetect = document.getElementById('caseSessionDetect');
+  if (caseSessionDetect) {
+    caseSessionDetect.addEventListener('click', () => {
+      const missing = getMissingPlaceholders();
+      const all = collectAllPlaceholders();
+      if (!all.length) {
+        showToast('No {{placeholders}} found in emails or library');
+        updatePlaceholderStatus();
+        return;
+      }
+      if (!missing.length) {
+        updatePlaceholderStatus();
+        showToast('All ' + all.length + ' placeholders already have fields');
+        return;
+      }
+      // One-click add all missing
+      const labels = missing.map(k => '{{' + k + '}} → ' + humanizePlaceholderKey(k)).join('\n');
+      if (confirm('Add ' + missing.length + ' missing field' + (missing.length > 1 ? 's' : '') + ' detected from email templates & library?\n\n' + labels)) {
+        addMissingPlaceholderFields(missing);
+      } else {
+        updatePlaceholderStatus();
+      }
     });
-  });
+  }
+  // Active Case inputs bound in renderCaseSession()
+
+  // Category filter chips are bound in renderEmailCatBar()
+  renderEmailCatBar();
+
+  const addEmailCatBtn = document.getElementById('addEmailCatBtn');
+  if (addEmailCatBtn) {
+    addEmailCatBtn.addEventListener('click', () => {
+      const label = prompt('New category name:', '');
+      if (!label || !label.trim()) return;
+      const id = slugifyCatId(label);
+      if (EMAIL_CATS.some(c => c.id === id)) {
+        showToast('Category already exists');
+        return;
+      }
+      const colorPick = prompt('Color hex (e.g. #60a5fa) or leave blank for default:', '#60a5fa');
+      const color = (colorPick && /^#?[0-9a-fA-F]{6}$/.test(colorPick.replace('#','')) )
+        ? (colorPick.startsWith('#') ? colorPick : '#' + colorPick)
+        : '#60a5fa';
+      EMAIL_CATS.push({ id, label: label.trim(), color });
+      saveEmailCats(EMAIL_CATS);
+      renderEmailCatBar();
+      renderEmails();
+      showToast('Category added');
+    });
+  }
+  const renameEmailCatBtn = document.getElementById('renameEmailCatBtn');
+  if (renameEmailCatBtn) {
+    renameEmailCatBtn.addEventListener('click', () => {
+      if (emailCategoryFilter === 'all') {
+        showToast('Select a category first (not All)');
+        return;
+      }
+      const cat = emailCatById(emailCategoryFilter);
+      const label = prompt('Rename category:', cat.label);
+      if (!label || !label.trim()) return;
+      cat.label = label.trim();
+      saveEmailCats(EMAIL_CATS);
+      renderEmailCatBar();
+      renderEmails();
+      showToast('Category renamed');
+    });
+  }
+  const deleteEmailCatBtn = document.getElementById('deleteEmailCatBtn');
+  if (deleteEmailCatBtn) {
+    deleteEmailCatBtn.addEventListener('click', () => {
+      if (emailCategoryFilter === 'all') {
+        showToast('Select a category to delete');
+        return;
+      }
+      if (EMAIL_CATS.length <= 1) {
+        showToast('Keep at least one category');
+        return;
+      }
+      const cat = emailCatById(emailCategoryFilter);
+      if (!confirm('Delete category "' + cat.label + '"? Emails in it move to the first category.')) return;
+      const fallback = EMAIL_CATS.find(c => c.id !== cat.id).id;
+      EMAILS.forEach(em => {
+        if ((em.category || '') === cat.id) em.category = fallback;
+      });
+      saveEmails(EMAILS);
+      EMAIL_CATS = EMAIL_CATS.filter(c => c.id !== cat.id);
+      saveEmailCats(EMAIL_CATS);
+      emailCategoryFilter = 'all';
+      renderEmailCatBar();
+      renderEmails();
+      showToast('Category deleted');
+    });
+  }
 
   // Re-render emails when entering edit mode
   const origEditToggle = document.getElementById('editToggle');
   if (origEditToggle) {
     origEditToggle.addEventListener('click', () => {
       setTimeout(() => {
-        if (document.body.dataset.tab === 'emails') renderEmails();
+        if (document.body.dataset.tab === 'emails') {
+          renderEmailCatBar();
+          renderEmails();
+        }
         if (addEmailBtn) {
           addEmailBtn.style.display = document.body.classList.contains('edit-mode') ? 'flex' : 'none';
         }
@@ -3879,10 +4739,16 @@ ${bod}`);
   }
 
   function shiftTrackerTick() {
-    updateStatsBar();
-    updateActiveBreakUI();
-    if (ensureShiftDay() || ensureWeek()) {
-      renderShiftTracker();
+    try {
+      updateStatsBar();
+      updateActiveBreakUI();
+      if (ensureShiftDay() || ensureWeek()) {
+        renderShiftTracker();
+      }
+    } catch (err) {
+      // Runs every second — never let one bad tick spam the console or
+      // silently freeze the shift clock. Log once per failure, keep ticking.
+      console.error('[SDS Case Library] shiftTrackerTick failed:', err);
     }
   }
 
@@ -3895,7 +4761,12 @@ ${bod}`);
     document.body.dataset.tab = valid;
     tabButtons.forEach(b => b.classList.toggle('active', b.dataset.tab === valid));
     storageSet(ACTIVE_TAB_KEY, valid);
-    if (valid === 'emails') renderEmails();
+    if (valid === 'emails') {
+      renderEmailCatBar();
+      renderEmails();
+      // Refresh placeholder intelligence whenever Emails tab is opened
+      if (typeof updatePlaceholderStatus === 'function') updatePlaceholderStatus();
+    }
   }
 
   tabButtons.forEach(btn => {
@@ -3909,7 +4780,7 @@ ${bod}`);
 // ========== Init ==========
   ensureShiftDay();
   ensureWeek();
-  loadCaseSession();
+  renderCaseSession();
   renderShiftTracker();
   updateStatsBar();
   updateActiveBreakUI();
@@ -3917,6 +4788,10 @@ ${bod}`);
   setActiveTab('library'); // Library is always the homepage on launch.
   loadNotepad();
   render();
+  // Initial placeholder scan (emails + library) after data is live
+  setTimeout(function () {
+    if (typeof updatePlaceholderStatus === 'function') updatePlaceholderStatus();
+  }, 80);
 
 
   // Notes quick inserts
@@ -4212,30 +5087,41 @@ ${bod}`);
 <script>
 (function(){
   'use strict';
-  // Professional sticky header:
-  // Title + tabs always stay. Search / quick access collapse when you scroll down.
-  // Absolute thresholds only — no direction flicker.
+  // Sticky header: title/tabs always on. Extras collapse with wide hysteresis
+  // + lock so slow scrolling / height change cannot flicker.
   const topBar = document.getElementById('topBar');
   if (!topBar) return;
 
-  const COMPACT_AFTER = 56;
-  const EXPAND_BEFORE = 18;
+  const COMPACT_AFTER = 90;
+  const EXPAND_BEFORE = 12;
+  const LOCK_MS = 320;
   let compact = false;
   let ticking = false;
   let suspended = false;
+  let lockUntil = 0;
 
   function apply(next) {
     if (next === compact) return;
+    const hBefore = topBar.offsetHeight || 0;
     compact = next;
     topBar.classList.toggle('top-bar-compact', compact);
+    lockUntil = Date.now() + LOCK_MS;
+    requestAnimationFrame(function () {
+      const hAfter = topBar.offsetHeight || 0;
+      const diff = hBefore - hAfter;
+      // Keep page content from jumping when extras collapse/expand
+      if (Math.abs(diff) > 2) {
+        window.scrollBy(0, diff);
+      }
+    });
   }
 
   function onScroll() {
     ticking = false;
-    if (suspended) return;
-    const y = Math.max(window.scrollY || 0, 0);
-    if (!compact && y > COMPACT_AFTER) apply(true);
-    else if (compact && y < EXPAND_BEFORE) apply(false);
+    if (suspended || Date.now() < lockUntil) return;
+    const y = Math.max(window.scrollY || document.documentElement.scrollTop || 0, 0);
+    if (!compact && y >= COMPACT_AFTER) apply(true);
+    else if (compact && y <= EXPAND_BEFORE) apply(false);
   }
 
   window.addEventListener('scroll', function () {
@@ -4253,18 +5139,18 @@ ${bod}`);
     });
     search.addEventListener('blur', function () {
       suspended = false;
+      lockUntil = 0;
       onScroll();
     });
   }
 
   document.querySelectorAll('.tab-btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      // Keep header stable on tab switch
+      lockUntil = 0;
       requestAnimationFrame(onScroll);
     });
   });
 
-  // Initial
   onScroll();
 })();
 </script>
